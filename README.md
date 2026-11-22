@@ -1,20 +1,22 @@
-# FoodExpress — база данных
+# Инструкция по использованию
 
-Добро пожаловать в проект. Твоя задача — спроектировать и реализовать базу данных для сервиса доставки еды.
-
-## С чего начать
-1. Прочитай [онбординг](docs/onboarding.md) — это твой первый рабочий день.
-2. Изучи [бизнес-правила](docs/company-rules.md).
-3. Открой [бэклог](docs/backlog.md) — там твои задачи.
-
-## Если ты никогда не работал с Git
-1. Посмотри [скринкаст](docs/git-screencast.md) (10 минут).
-2. Держи под рукой [шпаргалку](docs/git-cheatsheet.md).
-
-## Сдача работы
-Все требования к составу файлов, формату резервной копии и процессу сдачи описаны в файле [docs/acceptance.md](docs/acceptance.md).
-
-## Платформы
-Репозиторий зеркалируется на две платформы. Форкай ту, где тебе удобнее:
-- GitHub: [`<ссылка_на_github>`](https://github.com/NKhashchanov/total_designing_db_2026)
-- GitVerse: [`<ссылка_на_gitverse>`](https://gitverse.ru/nkhashchanov/total_designing_db_2026)
+1. Скопируйте папку `db` в свой репозиторий `Andrienko_Yuliya_total_designing_db_2026`.
+2. В PostgreSQL выполните по порядку:
+   - db/schema/01_types.sql
+   - db/schema/02_tables.sql
+   - db/schema/03_functions.sql
+   - db/schema/04_triggers.sql
+   - db/schema/05_views.sql
+   - db/schema/grants.sql
+3. Проверьте:
+   ```sql
+   SET search_path TO andrienko_food, exts;
+   CALL insert_test_data(10);
+   SELECT count(*) FROM client;
+   SELECT * FROM get_statistic() LIMIT 5;
+   ```
+4. Сделайте backup:
+   ```bash
+   pg_dump -Fc -n andrienko_food -f db/foodexpress_andrienko.backup имя_базы
+   ```
+5. Закоммитьте и запушьте в свой форк.

@@ -299,5 +299,5 @@ AS $$
     LEFT JOIN rest_stats rs ON rs.restaurant_id = r.restaurant_id
     LEFT JOIN best_prod bp ON bp.restaurant_id = r.restaurant_id
     LEFT JOIN best_cli bc ON bc.restaurant_id = r.restaurant_id;
-$$;- -   u p d a t e d  
- 
+$$; 
+ 

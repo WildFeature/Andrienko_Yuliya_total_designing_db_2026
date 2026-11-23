@@ -31,10 +31,10 @@ psql -d your_database -f db/schema/grants.sql
 
 ```sql
 SET search_path TO andrienko_food, exts;
+CALL erase_test_data();
 CALL insert_test_data(10);
-SELECT * FROM get_statistic() LIMIT 10;
-SELECT * FROM how_much_money LIMIT 5;
-CALL courier_salary();
+SELECT count(*) FROM "order";
+SELECT count(*) FROM payment;
 ```
 
 ## Основные объекты

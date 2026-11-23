@@ -1,5 +1,4 @@
 -- 01_types.sql
--- Сначала создаём схему exts и расширение (если ещё нет)
 CREATE SCHEMA IF NOT EXISTS exts;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA exts;
 

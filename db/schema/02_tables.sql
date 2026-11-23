@@ -1,4 +1,5 @@
 -- 02_tables.sql
+
 SET search_path TO andrienko_food, exts;
 
 CREATE TABLE client (
@@ -25,10 +26,14 @@ CREATE TABLE restaurant (
     restaurant_id   uuid PRIMARY KEY DEFAULT exts.uuid_generate_v4(),
     restaurant_name varchar(100) NOT NULL,
     address_id      uuid NOT NULL UNIQUE REFERENCES address(address_id),
-    description     text,
+    description     text NOT NULL,
     work_start      time NOT NULL,
     work_end        time NOT NULL,
-    company_details text,
+    inn             varchar(12) NOT NULL,
+    kpp             varchar(9),
+    ogrn            varchar(15) NOT NULL,
+    bank_account    varchar(20) NOT NULL,
+    bik             varchar(9) NOT NULL,
     rating          numeric(3,2),
     status          restaurant_status NOT NULL,
     CONSTRAINT chk_rating_restaurant CHECK (rating IS NULL OR rating BETWEEN 0 AND 5),
@@ -44,18 +49,20 @@ CREATE TABLE product (
     product_id          uuid PRIMARY KEY DEFAULT exts.uuid_generate_v4(),
     product_name        varchar(100) NOT NULL,
     product_category_id uuid NOT NULL REFERENCES product_category(product_category_id),
-    price               numeric(10,2) NOT NULL CHECK (price >= 0),
+    price               numeric(6,2) NOT NULL CHECK (price >= 0),
     restaurant_id       uuid NOT NULL REFERENCES restaurant(restaurant_id),
     photo_url           text,
     rating              numeric(3,2),
     status              product_status NOT NULL,
-    description         text,
+    description         text NOT NULL,
     CONSTRAINT chk_rating_product CHECK (rating IS NULL OR rating BETWEEN 0 AND 5)
 );
 
 CREATE TABLE courier (
     courier_id     uuid PRIMARY KEY DEFAULT exts.uuid_generate_v4(),
-    fio            varchar(100) NOT NULL,
+    last_name      varchar(50) NOT NULL,
+    first_name     varchar(50) NOT NULL,
+    middle_name    varchar(50),
     phone_number   char(11) NOT NULL UNIQUE,
     status         courier_status NOT NULL,
     hire_date      date NOT NULL,
@@ -72,7 +79,7 @@ CREATE TABLE courier_pay (
     year             int NOT NULL,
     month            int NOT NULL CHECK (month BETWEEN 1 AND 12),
     courier_id       uuid NOT NULL REFERENCES courier(courier_id),
-    amount           numeric(12,2) NOT NULL CHECK (amount >= 0),
+    amount           numeric(10,2) NOT NULL CHECK (amount >= 0),
     coefficient_used numeric(3,2) NOT NULL,
     PRIMARY KEY (year, month, courier_id)
 );
@@ -85,9 +92,9 @@ CREATE TABLE "order" (
     restaurant_id      uuid NOT NULL REFERENCES restaurant(restaurant_id),
     order_timestamp    timestamp NOT NULL DEFAULT now(),
     delivery_timestamp timestamp,
-    order_amount       numeric(12,2) NOT NULL CHECK (order_amount >= 0),
-    commission         numeric(12,2) NOT NULL CHECK (commission >= 0),
-    total_amount       numeric(12,2) NOT NULL CHECK (total_amount >= 1000),
+    order_amount       numeric(10,2) NOT NULL CHECK (order_amount >= 0),
+    commission         numeric(10,2) NOT NULL CHECK (commission >= 0),
+    total_amount       numeric(10,2) NOT NULL CHECK (total_amount >= 1000),
     status             order_status NOT NULL,
     pay_status         order_pay_status NOT NULL,
     description        text,
@@ -101,7 +108,7 @@ CREATE TABLE "order" (
 CREATE TABLE order_structure (
     order_id   uuid NOT NULL REFERENCES "order"(order_id),
     product_id uuid NOT NULL REFERENCES product(product_id),
-    quantity   numeric(8,3) NOT NULL CHECK (quantity > 0),
+    quantity   numeric(5,3) NOT NULL CHECK (quantity > 0),
     PRIMARY KEY (order_id, product_id)
 );
 
@@ -109,7 +116,7 @@ CREATE TABLE payment (
     payment_id       uuid PRIMARY KEY DEFAULT exts.uuid_generate_v4(),
     order_id         uuid NOT NULL REFERENCES "order"(order_id),
     payment_type     payment_type NOT NULL,
-    amount           numeric(12,2) NOT NULL,
+    amount           numeric(10,2) NOT NULL,
     transaction_id   varchar(100) NOT NULL UNIQUE,
     transaction_time timestamp NOT NULL,
     status           payment_status NOT NULL
